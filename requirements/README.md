@@ -7,4 +7,5 @@ Functional and non-functional requirements for LearnMap.
 - `FR-XXX` — Functional Requirement
 - `NFR-XXX` — Non-Functional Requirement
 
-Each requirement should link to a GitHub issue in this repo.
+Each epic links to its GitHub issue in this repo. The full ordered story
+backlog is in [`.github/backlog/ORDER.md`](../.github/backlog/ORDER.md).
