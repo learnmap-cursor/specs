@@ -78,3 +78,7 @@ Stories are filed as issues in this repo. Implement in this order (INVEST-sized;
 | [#50](https://github.com/learnmap-cursor/specs/issues/50) | Publish / unpublish |
 
 Machine-readable definitions: [`stories.json`](stories.json).
+
+## Project board
+
+[#52](https://github.com/learnmap-cursor/specs/issues/52) tracks creating the LearnMap GitHub Project and moving these issues into **Backlog** (automation is in `bootstrap-backlog.yml`; requires org project permissions).
