@@ -7,16 +7,21 @@ requirements (`requirements/`), architecture docs (`architecture/`), ADRs (`deci
 diagrams (`diagrams/`), GitHub issue templates (`.github/ISSUE_TEMPLATE/`), a CI workflow
 (`.github/workflows/issue-to-pr.yml`), and Claude Code agent definitions (`.claude/agents/`).
 
-There is **no application to build, run, or serve here** and **no dependencies to install** —
-there is no `package.json`, lockfile, source tree, or test suite. The actual LearnMap product
-lives in separate sibling repos (`learnmap/frontend` / `app` — React + Vite; `learnmap/backend`
-/ `api` — NestJS + Prisma + PostgreSQL), which are not part of this repository.
+There is **no production application** in the root of this repository. The actual LearnMap
+product lives in separate sibling repos (`learnmap/frontend` / `app` — React + Vite;
+`learnmap/backend` / `api` — NestJS + Prisma + PostgreSQL), which are not part of this
+repository.
+
+An exception is **`prototype/`**: a clickable Vite + shadcn/ui MVP mock that demonstrates
+the approved requirements. It is self-contained (`cd prototype && npm install && npm run
+dev`) and is not required for specs/docs work.
 
 ### Working in this repo
-- Most changes are edits to Markdown or YAML. No install/build step is required; the update
-  script is intentionally a no-op.
-- The only executable artifacts are GitHub Actions / issue-form YAML that run on GitHub's
-  infrastructure, not locally.
+- Most changes are edits to Markdown or YAML. No install/build step is required for docs;
+  the update script is intentionally a no-op.
+- For the prototype only: `cd prototype && npm install && npm run dev` (or `npm run build`).
+- The only other executable artifacts are GitHub Actions / issue-form YAML that run on
+  GitHub's infrastructure, not locally.
 
 ### Validating changes (lint/test analog)
 - Validate YAML parses with the pre-installed Python + PyYAML:

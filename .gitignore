@@ -1,0 +1,11 @@
+# Prototype app dependencies & build output
+prototype/node_modules/
+prototype/dist/
+prototype/dist-ssr/
+prototype/*.local
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.sw?
