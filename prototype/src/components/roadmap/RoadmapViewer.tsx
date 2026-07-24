@@ -53,6 +53,7 @@ export function RoadmapViewer({
         id: edge.id,
         source: edge.source,
         target: edge.target,
+        type: "smoothstep",
         animated: false,
         style: { stroke: "var(--border)" },
       })),
@@ -71,7 +72,7 @@ export function RoadmapViewer({
   }, [initialEdges, setEdges])
 
   return (
-    <div className="h-[min(70vh,640px)] overflow-hidden rounded-xl border bg-muted/20">
+    <div className="h-[min(80vh,800px)] overflow-hidden rounded-xl border bg-muted/20">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -79,11 +80,13 @@ export function RoadmapViewer({
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
         fitView
+        fitViewOptions={{ padding: 0.2 }}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable
         onNodeClick={(_, node) => onSelectTopic(node.id)}
         proOptions={{ hideAttribution: true }}
+        defaultEdgeOptions={{ type: "smoothstep" }}
       >
         <Background gap={18} size={1} />
         <Controls showInteractive={false} />
