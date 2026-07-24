@@ -2,6 +2,7 @@
 
 **Status:** Approved
 **Type:** Epic
+**GitHub:** https://github.com/learnmap-cursor/specs/issues/9
 
 ## Goal
 
