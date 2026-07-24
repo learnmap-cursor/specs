@@ -60,7 +60,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Internet",
         description: "How the web works: DNS, HTTP, browsers, and hosting basics.",
         section: "Foundations",
-        position: { x: 0, y: 0 },
+        position: { x: 160, y: 0 },
         resources: [
           {
             id: "fe-internet-1",
@@ -75,7 +75,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "HTML",
         description: "Semantic markup, forms, accessibility attributes, and document structure.",
         section: "Foundations",
-        position: { x: 250, y: 0 },
+        position: { x: 160, y: 120 },
         resources: [
           {
             id: "fe-html-1",
@@ -90,7 +90,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "CSS",
         description: "Layout, flexbox, grid, responsive design, and modern styling techniques.",
         section: "Foundations",
-        position: { x: 500, y: 0 },
+        position: { x: 160, y: 240 },
         resources: [
           {
             id: "fe-css-1",
@@ -105,7 +105,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "JavaScript",
         description: "Language fundamentals, DOM APIs, async patterns, and modules.",
         section: "Foundations",
-        position: { x: 750, y: 0 },
+        position: { x: 160, y: 360 },
         resources: [
           {
             id: "fe-js-1",
@@ -120,7 +120,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "TypeScript",
         description: "Types, interfaces, generics, and tooling for safer frontend code.",
         section: "Tooling",
-        position: { x: 250, y: 180 },
+        position: { x: 0, y: 480 },
         resources: [
           {
             id: "fe-ts-1",
@@ -135,7 +135,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Git & GitHub",
         description: "Version control workflows, branching, and collaboration on GitHub.",
         section: "Tooling",
-        position: { x: 500, y: 180 },
+        position: { x: 320, y: 480 },
         resources: [
           {
             id: "fe-vcs-1",
@@ -150,7 +150,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Pick a Framework",
         description: "Compare React, Vue, and Svelte — choose one and go deep.",
         section: "Frameworks",
-        position: { x: 250, y: 360 },
+        position: { x: 160, y: 600 },
         resources: [
           {
             id: "fe-framework-1",
@@ -165,7 +165,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Testing",
         description: "Unit, integration, and end-to-end testing for UI code.",
         section: "Frameworks",
-        position: { x: 500, y: 360 },
+        position: { x: 160, y: 720 },
         resources: [
           {
             id: "fe-testing-1",
@@ -180,7 +180,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Accessibility",
         description: "WCAG basics, keyboard navigation, ARIA, and inclusive UX.",
         section: "Quality",
-        position: { x: 375, y: 540 },
+        position: { x: 160, y: 840 },
         resources: [
           {
             id: "fe-a11y-1",
@@ -217,7 +217,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "React Basics",
         description: "JSX, components, props, and rendering mental models.",
         section: "Core",
-        position: { x: 0, y: 0 },
+        position: { x: 160, y: 0 },
         resources: [
           {
             id: "re-basics-1",
@@ -232,7 +232,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Hooks",
         description: "useState, useEffect, custom hooks, and rules of hooks.",
         section: "Core",
-        position: { x: 250, y: 0 },
+        position: { x: 160, y: 120 },
         resources: [
           {
             id: "re-hooks-1",
@@ -247,7 +247,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "React Router",
         description: "Client-side routing, nested layouts, and loaders.",
         section: "App structure",
-        position: { x: 0, y: 180 },
+        position: { x: 0, y: 240 },
         resources: [
           {
             id: "re-router-1",
@@ -262,7 +262,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "State Management",
         description: "Local vs shared state, context, and server-state libraries.",
         section: "App structure",
-        position: { x: 250, y: 180 },
+        position: { x: 160, y: 240 },
         resources: [
           {
             id: "re-state-1",
@@ -277,7 +277,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Forms",
         description: "Controlled inputs, validation, and accessible form patterns.",
         section: "UI",
-        position: { x: 500, y: 90 },
+        position: { x: 320, y: 240 },
         resources: [
           {
             id: "re-forms-1",
@@ -292,7 +292,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Performance",
         description: "Memoization pitfalls, concurrent features, and profiling.",
         section: "UI",
-        position: { x: 500, y: 270 },
+        position: { x: 160, y: 360 },
         resources: [
           {
             id: "re-perf-1",
@@ -307,7 +307,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Testing React",
         description: "Component tests with Testing Library and user-centric assertions.",
         section: "Quality",
-        position: { x: 750, y: 180 },
+        position: { x: 160, y: 480 },
         resources: [
           {
             id: "re-testing-1",
@@ -322,7 +322,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Next steps",
         description: "SSR frameworks, design systems, and production checklist.",
         section: "Quality",
-        position: { x: 1000, y: 180 },
+        position: { x: 160, y: 600 },
         resources: [
           {
             id: "re-next-1",
@@ -358,7 +358,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Linux Basics",
         description: "Shell, processes, permissions, and package management.",
         section: "Foundations",
-        position: { x: 0, y: 0 },
+        position: { x: 160, y: 0 },
         resources: [
           {
             id: "do-linux-1",
@@ -373,7 +373,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Networking",
         description: "TCP/IP, DNS, load balancing, and TLS essentials.",
         section: "Foundations",
-        position: { x: 250, y: 0 },
+        position: { x: 0, y: 120 },
         resources: [
           {
             id: "do-networking-1",
@@ -388,7 +388,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Containers",
         description: "Docker images, volumes, networking, and compose.",
         section: "Runtime",
-        position: { x: 0, y: 180 },
+        position: { x: 320, y: 120 },
         resources: [
           {
             id: "do-containers-1",
@@ -403,7 +403,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Kubernetes",
         description: "Pods, deployments, services, and cluster mental models.",
         section: "Runtime",
-        position: { x: 250, y: 180 },
+        position: { x: 160, y: 240 },
         resources: [
           {
             id: "do-k8s-1",
@@ -418,7 +418,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "CI/CD",
         description: "Pipelines, artifacts, environments, and progressive delivery.",
         section: "Delivery",
-        position: { x: 500, y: 90 },
+        position: { x: 0, y: 360 },
         resources: [
           {
             id: "do-ci-1",
@@ -433,7 +433,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Infrastructure as Code",
         description: "Declarative infra with Terraform or similar tools.",
         section: "Delivery",
-        position: { x: 500, y: 270 },
+        position: { x: 320, y: 360 },
         resources: [
           {
             id: "do-iac-1",
@@ -448,7 +448,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Observability",
         description: "Logs, metrics, traces, and alerting that help you sleep.",
         section: "Operations",
-        position: { x: 750, y: 180 },
+        position: { x: 160, y: 480 },
         resources: [
           {
             id: "do-observability-1",
@@ -463,7 +463,7 @@ export const ROADMAPS: Roadmap[] = [
         title: "Cloud Fundamentals",
         description: "Compute, storage, networking, and IAM on a major cloud.",
         section: "Operations",
-        position: { x: 1000, y: 180 },
+        position: { x: 160, y: 600 },
         resources: [
           {
             id: "do-cloud-1",

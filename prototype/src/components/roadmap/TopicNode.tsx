@@ -35,7 +35,7 @@ export function TopicNode({ data, selected }: NodeProps<TopicFlowNode>) {
         selected && "ring-2 ring-ring"
       )}
     >
-      <Handle type="target" position={Position.Left} className="!bg-muted-foreground" />
+      <Handle type="target" position={Position.Top} className="!bg-muted-foreground" />
       <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
         {data.section}
       </p>
@@ -44,7 +44,7 @@ export function TopicNode({ data, selected }: NodeProps<TopicFlowNode>) {
         <span className={cn("size-2 rounded-full", statusDot[data.status])} />
         {STATUS_LABELS[data.status]}
       </div>
-      <Handle type="source" position={Position.Right} className="!bg-muted-foreground" />
+      <Handle type="source" position={Position.Bottom} className="!bg-muted-foreground" />
     </div>
   )
 }
