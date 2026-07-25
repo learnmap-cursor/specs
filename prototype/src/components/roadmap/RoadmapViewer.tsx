@@ -1,8 +1,6 @@
 import { useEffect, useMemo } from "react"
 import {
   Background,
-  Controls,
-  MiniMap,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -11,7 +9,8 @@ import {
 } from "@xyflow/react"
 
 import { TopicNode, type TopicFlowNode } from "@/components/roadmap/TopicNode"
-import type { Roadmap, TopicStatus } from "@/data/mock"
+import { buildRoadmapEdges, type Roadmap, type TopicStatus } from "@/data/mock"
+import { layoutRoadmapNodes } from "@/lib/layout-roadmap"
 import { getTopicStatus } from "@/lib/store"
 
 const nodeTypes = {
@@ -31,34 +30,59 @@ export function RoadmapViewer({
   selectedTopicId,
   onSelectTopic,
 }: RoadmapViewerProps) {
-  const initialNodes = useMemo<TopicFlowNode[]>(
-    () =>
-      roadmap.topics.map((topic) => ({
-        id: topic.id,
-        type: "topic",
-        position: topic.position,
-        data: {
-          title: topic.title,
-          section: topic.section,
-          status: getTopicStatus(progress, roadmap.id, topic.id),
-        },
-        selected: topic.id === selectedTopicId,
-      })),
-    [roadmap, progress, selectedTopicId]
+  const layout = useMemo(
+    () => layoutRoadmapNodes(roadmap.topics),
+    [roadmap.topics]
   )
 
-  const initialEdges = useMemo<Edge[]>(
+  const layoutById = useMemo(() => {
+    return new Map(layout.map((item) => [item.id, item]))
+  }, [layout])
+
+  const initialNodes = useMemo<TopicFlowNode[]>(
     () =>
-      roadmap.edges.map((edge) => ({
+      roadmap.topics.map((topic) => {
+        const placed = layoutById.get(topic.id)
+        return {
+          id: topic.id,
+          type: "topic",
+          position: { x: placed?.x ?? 0, y: placed?.y ?? 0 },
+          data: {
+            title: topic.title,
+            kind: topic.kind,
+            status: getTopicStatus(progress, roadmap.id, topic.id),
+            side: placed?.side,
+          },
+          selected: topic.id === selectedTopicId,
+        }
+      }),
+    [roadmap, progress, selectedTopicId, layoutById]
+  )
+
+  const initialEdges = useMemo<Edge[]>(() => {
+    const topicIds = new Set(
+      roadmap.topics.filter((topic) => topic.kind === "topic").map((topic) => topic.id)
+    )
+
+    return buildRoadmapEdges(roadmap.topics).map((edge) => {
+      const isSpine = topicIds.has(edge.source) && topicIds.has(edge.target)
+      const sourceSide = layoutById.get(edge.target)?.side
+
+      return {
         id: edge.id,
         source: edge.source,
         target: edge.target,
         type: "smoothstep",
         animated: false,
         style: { stroke: "var(--border)" },
-      })),
-    [roadmap.edges]
-  )
+        ...(isSpine
+          ? { sourceHandle: "spine" }
+          : {
+              sourceHandle: sourceSide === "left" ? "left" : "right",
+            }),
+      }
+    })
+  }, [roadmap.topics, layoutById])
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
@@ -80,22 +104,20 @@ export function RoadmapViewer({
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
         fitView
-        fitViewOptions={{ padding: 0.2 }}
+        fitViewOptions={{ padding: 0.25 }}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable
+        panOnDrag
+        zoomOnScroll={false}
+        zoomOnPinch={false}
+        zoomOnDoubleClick={false}
+        preventScrolling
         onNodeClick={(_, node) => onSelectTopic(node.id)}
         proOptions={{ hideAttribution: true }}
         defaultEdgeOptions={{ type: "smoothstep" }}
       >
         <Background gap={18} size={1} />
-        <Controls showInteractive={false} />
-        <MiniMap
-          pannable
-          zoomable
-          nodeStrokeWidth={2}
-          className="!bg-card !border"
-        />
       </ReactFlow>
     </div>
   )

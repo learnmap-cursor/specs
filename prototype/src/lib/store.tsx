@@ -1,7 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import * as React from "react"
 
-import { ROADMAPS, type TopicStatus } from "@/data/mock"
+import {
+  getRoadmapById,
+  type Roadmap,
+  type Topic,
+  type TopicStatus,
+} from "@/data/mock"
 
 const STORAGE_KEY = "learnmap-prototype-state"
 
@@ -35,6 +40,8 @@ export type AppState = {
   enrolments: Enrolment[]
   progress: Record<string, TopicStatus>
   recentlyCompleted: CompletedTopic[]
+  /** User-added subtopics keyed by roadmap id. */
+  extraTopics: Record<string, Topic[]>
 }
 
 type StoreContextValue = {
@@ -47,6 +54,8 @@ type StoreContextValue = {
   setTopicStatus: (roadmapId: string, topicId: string, status: TopicStatus) => void
   setLastTopic: (roadmapId: string, topicId: string) => void
   resetProgress: (roadmapId: string) => void
+  addSubtopic: (roadmapId: string, parentId: string, title: string) => Topic | null
+  getMergedRoadmap: (roadmapId: string) => Roadmap | undefined
   isEnrolled: (roadmapId: string) => boolean
   getProgressForRoadmap: (roadmapId: string) => {
     done: number
@@ -64,10 +73,25 @@ const defaultState: AppState = {
   enrolments: [],
   progress: {},
   recentlyCompleted: [],
+  extraTopics: {},
 }
 
 function progressKey(roadmapId: string, topicId: string) {
   return `${roadmapId}:${topicId}`
+}
+
+function mergeRoadmap(
+  roadmapId: string,
+  extraTopics: Record<string, Topic[]>
+): Roadmap | undefined {
+  const base = getRoadmapById(roadmapId)
+  if (!base) return undefined
+  const extras = extraTopics[roadmapId] ?? []
+  if (extras.length === 0) return base
+  return {
+    ...base,
+    topics: [...base.topics, ...extras],
+  }
 }
 
 function loadState(): AppState {
@@ -82,6 +106,7 @@ function loadState(): AppState {
       enrolments: parsed.enrolments ?? [],
       progress: parsed.progress ?? {},
       recentlyCompleted: parsed.recentlyCompleted ?? [],
+      extraTopics: parsed.extraTopics ?? {},
     }
   } catch {
     return defaultState
@@ -156,12 +181,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }))
   }, [])
 
+  const getMergedRoadmap = React.useCallback(
+    (roadmapId: string) => mergeRoadmap(roadmapId, state.extraTopics),
+    [state.extraTopics]
+  )
+
   const enrol = React.useCallback((roadmapId: string) => {
     setState((prev) => {
       if (prev.enrolments.some((item) => item.roadmapId === roadmapId)) {
         return prev
       }
-      const roadmap = ROADMAPS.find((item) => item.id === roadmapId)
+      const roadmap = mergeRoadmap(roadmapId, prev.extraTopics)
+      const firstTopic = roadmap?.topics.find((item) => item.kind === "topic")
       return {
         ...prev,
         enrolments: [
@@ -169,7 +200,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           {
             roadmapId,
             enrolledAt: new Date().toISOString(),
-            lastTopicId: roadmap?.topics[0]?.id ?? null,
+            lastTopicId: firstTopic?.id ?? null,
           },
         ],
       }
@@ -187,7 +218,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     (roadmapId: string, topicId: string, status: TopicStatus) => {
       setState((prev) => {
         const key = progressKey(roadmapId, topicId)
-        const roadmap = ROADMAPS.find((item) => item.id === roadmapId)
+        const roadmap = mergeRoadmap(roadmapId, prev.extraTopics)
         const topic = roadmap?.topics.find((item) => item.id === topicId)
         let recentlyCompleted = prev.recentlyCompleted
 
@@ -255,6 +286,40 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
+  const addSubtopic = React.useCallback(
+    (roadmapId: string, parentId: string, title: string): Topic | null => {
+      const trimmed = title.trim()
+      if (!trimmed) return null
+
+      const roadmap = mergeRoadmap(roadmapId, state.extraTopics)
+      const parent = roadmap?.topics.find(
+        (item) => item.id === parentId && item.kind === "topic"
+      )
+      if (!parent) return null
+
+      const created: Topic = {
+        id: `custom-${roadmapId}-${Date.now()}`,
+        title: trimmed,
+        description: "Custom subtopic",
+        section: "Custom",
+        kind: "subtopic",
+        parentId,
+        resources: [],
+      }
+
+      setState((prev) => ({
+        ...prev,
+        extraTopics: {
+          ...prev.extraTopics,
+          [roadmapId]: [...(prev.extraTopics[roadmapId] ?? []), created],
+        },
+      }))
+
+      return created
+    },
+    [state.extraTopics]
+  )
+
   const isEnrolled = React.useCallback(
     (roadmapId: string) => state.enrolments.some((item) => item.roadmapId === roadmapId),
     [state.enrolments]
@@ -262,7 +327,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const getProgressForRoadmap = React.useCallback(
     (roadmapId: string) => {
-      const roadmap = ROADMAPS.find((item) => item.id === roadmapId)
+      const roadmap = mergeRoadmap(roadmapId, state.extraTopics)
       const total = roadmap?.topics.length ?? 0
       let done = 0
       let inProgress = 0
@@ -280,7 +345,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const percent = total === 0 ? 0 : Math.round((done / total) * 100)
       return { done, inProgress, skipped, notStarted, total, percent }
     },
-    [state.progress]
+    [state.progress, state.extraTopics]
   )
 
   const value = React.useMemo(
@@ -294,6 +359,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setTopicStatus,
       setLastTopic,
       resetProgress,
+      addSubtopic,
+      getMergedRoadmap,
       isEnrolled,
       getProgressForRoadmap,
     }),
@@ -307,6 +374,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setTopicStatus,
       setLastTopic,
       resetProgress,
+      addSubtopic,
+      getMergedRoadmap,
       isEnrolled,
       getProgressForRoadmap,
     ]
@@ -333,7 +402,7 @@ export function getTopicStatus(
 
 export const STATUS_LABELS: Record<TopicStatus, string> = {
   not_started: "Not started",
-  in_progress: "In progress",
+  in_progress: "Learning",
   done: "Done",
   skipped: "Skipped",
 }
