@@ -1,50 +1,75 @@
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react"
 
-import type { TopicStatus } from "@/data/mock"
-import { STATUS_LABELS } from "@/lib/store"
+import type { TopicKind, TopicStatus } from "@/data/mock"
+import type { NodeSide } from "@/lib/layout-roadmap"
 import { cn } from "@/lib/utils"
 
 export type TopicNodeData = {
   title: string
-  section: string
+  kind: TopicKind
   status: TopicStatus
+  side?: NodeSide
 }
 
 export type TopicFlowNode = Node<TopicNodeData, "topic">
 
-const statusClass: Record<TopicStatus, string> = {
-  not_started: "border-status-not-started bg-status-not-started/20",
-  in_progress: "border-status-in-progress bg-status-in-progress/20",
-  done: "border-status-done bg-status-done/20",
-  skipped: "border-status-skipped bg-status-skipped/20",
-}
-
-const statusDot: Record<TopicStatus, string> = {
-  not_started: "bg-status-not-started",
-  in_progress: "bg-status-in-progress",
-  done: "bg-status-done",
-  skipped: "bg-status-skipped",
-}
-
 export function TopicNode({ data, selected }: NodeProps<TopicFlowNode>) {
+  const isTopic = data.kind === "topic"
+  const isDone = data.status === "done"
+  const isSkipped = data.status === "skipped"
+  const isLearning = data.status === "in_progress"
+
   return (
     <div
       className={cn(
-        "min-w-44 rounded-lg border-2 bg-card px-3 py-2 shadow-none transition-colors",
-        statusClass[data.status],
+        "min-w-36 max-w-48 rounded-md border-2 px-3 py-2 transition-colors",
+        isTopic
+          ? "border-node-topic bg-node-topic/20"
+          : "border-node-subtopic bg-node-subtopic/20",
+        isLearning && "border-status-in-progress bg-status-in-progress/35",
+        isSkipped && "border-muted-foreground/30 bg-muted text-muted-foreground",
         selected && "ring-2 ring-ring"
       )}
     >
-      <Handle type="target" position={Position.Top} className="!bg-muted-foreground" />
-      <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-        {data.section}
+      {isTopic ? (
+        <>
+          <Handle type="target" position={Position.Top} className="!bg-muted-foreground" />
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            id="spine"
+            className="!bg-muted-foreground"
+          />
+          <Handle
+            type="source"
+            position={Position.Left}
+            id="left"
+            className="!bg-muted-foreground"
+          />
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="right"
+            className="!bg-muted-foreground"
+          />
+        </>
+      ) : (
+        <Handle
+          type="target"
+          position={data.side === "left" ? Position.Right : Position.Left}
+          className="!bg-muted-foreground"
+        />
+      )}
+
+      <p
+        className={cn(
+          "text-sm font-medium leading-snug",
+          isTopic ? "text-foreground" : "text-foreground/90",
+          (isDone || isSkipped) && "line-through decoration-2"
+        )}
+      >
+        {data.title}
       </p>
-      <p className="mt-0.5 text-sm font-medium">{data.title}</p>
-      <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-        <span className={cn("size-2 rounded-full", statusDot[data.status])} />
-        {STATUS_LABELS[data.status]}
-      </div>
-      <Handle type="source" position={Position.Bottom} className="!bg-muted-foreground" />
     </div>
   )
 }

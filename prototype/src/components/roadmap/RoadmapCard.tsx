@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { BookOpen, RotateCcw } from "lucide-react"
+import { BookOpen, Bookmark, BookmarkCheck, RotateCcw } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import type { Roadmap } from "@/data/mock"
+import { countTopics, type Roadmap } from "@/data/mock"
 import { useStore } from "@/lib/store"
 
 type RoadmapCardProps = {
@@ -30,10 +30,12 @@ export function RoadmapCard({
   onUnenrol,
   onReset,
 }: RoadmapCardProps) {
-  const { isEnrolled, getProgressForRoadmap, state } = useStore()
+  const { isEnrolled, getProgressForRoadmap, state, getMergedRoadmap } = useStore()
   const enrolled = isEnrolled(roadmap.id)
   const progress = getProgressForRoadmap(roadmap.id)
   const enrolment = state.enrolments.find((item) => item.roadmapId === roadmap.id)
+  const merged = getMergedRoadmap(roadmap.id) ?? roadmap
+  const topicCount = countTopics(merged.topics)
   const continueTo = enrolment?.lastTopicId
     ? `/roadmaps/${roadmap.id}?topic=${enrolment.lastTopicId}`
     : `/roadmaps/${roadmap.id}`
@@ -42,8 +44,34 @@ export function RoadmapCard({
     <Card className="flex h-full flex-col">
       <CardHeader className="gap-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <CardTitle className="text-base">{roadmap.title}</CardTitle>
-          {enrolled ? <Badge variant="secondary">In progress</Badge> : null}
+          <CardTitle className="text-base">
+            <Link
+              to={`/roadmaps/${roadmap.id}`}
+              className="transition-colors hover:text-primary"
+            >
+              {roadmap.title}
+            </Link>
+          </CardTitle>
+          <div className="flex items-center gap-1">
+            {enrolled ? <Badge variant="secondary">In progress</Badge> : null}
+            {variant === "catalog" ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                aria-label={enrolled ? "Unenrol from roadmap" : "Enrol in roadmap"}
+                aria-pressed={enrolled}
+                onClick={enrolled ? onUnenrol : onEnrol}
+              >
+                {enrolled ? (
+                  <BookmarkCheck className="size-4 text-primary" />
+                ) : (
+                  <Bookmark className="size-4" />
+                )}
+              </Button>
+            ) : null}
+          </div>
         </div>
         <CardDescription>{roadmap.description}</CardDescription>
         <div className="flex flex-wrap gap-1.5">
@@ -57,7 +85,10 @@ export function RoadmapCard({
       <CardContent className="mt-auto flex flex-col gap-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <BookOpen className="size-4" />
-          {roadmap.topics.length} topics
+          {topicCount} topics
+          {merged.topics.length > topicCount
+            ? ` · ${merged.topics.length - topicCount} subtopics`
+            : null}
         </div>
         {variant === "dashboard" ? (
           <div className="space-y-2">
@@ -67,7 +98,7 @@ export function RoadmapCard({
             </div>
             <Progress value={progress.percent} />
             <p className="text-xs text-muted-foreground">
-              {progress.done} done · {progress.inProgress} in progress ·{" "}
+              {progress.done} done · {progress.inProgress} learning ·{" "}
               {progress.skipped} skipped · {progress.notStarted} not started
             </p>
           </div>
@@ -83,18 +114,11 @@ export function RoadmapCard({
               <RotateCcw />
             </Button>
           </>
-        ) : enrolled ? (
-          <>
-            <Button asChild className="flex-1">
-              <Link to={`/roadmaps/${roadmap.id}`}>Open</Link>
-            </Button>
-            <Button variant="outline" onClick={onUnenrol}>
-              Unenrol
-            </Button>
-          </>
         ) : (
-          <Button className="w-full" onClick={onEnrol}>
-            Enrol
+          <Button asChild className="flex-1" variant="outline">
+            <Link to={`/roadmaps/${roadmap.id}`}>
+              {enrolled ? "Open" : "Browse"}
+            </Link>
           </Button>
         )}
       </CardFooter>

@@ -58,7 +58,7 @@ export function CatalogPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Browse roadmaps</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Search and filter the library, then enrol to track progress on your dashboard.
+          Browse any roadmap freely. Bookmark one to track progress on your dashboard.
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export function CatalogPage() {
             variant="catalog"
             onEnrol={() => {
               enrol(roadmap.id)
-              toast.success(`Enrolled in ${roadmap.title}`)
+              toast.success(`Bookmarked ${roadmap.title}`)
             }}
             onUnenrol={() => setUnenrolTarget(roadmap)}
           />
@@ -120,9 +120,9 @@ export function CatalogPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Unenrol from {unenrolTarget?.title}?</DialogTitle>
+            <DialogTitle>Remove bookmark for {unenrolTarget?.title}?</DialogTitle>
             <DialogDescription>
-              You will leave this roadmap. Progress is preserved and restored if you re-enrol.
+              The roadmap leaves your dashboard. Progress is preserved if you bookmark it again.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -134,11 +134,11 @@ export function CatalogPage() {
               onClick={() => {
                 if (!unenrolTarget) return
                 unenrol(unenrolTarget.id)
-                toast.message(`Unenrolled from ${unenrolTarget.title}`)
+                toast.message(`Removed bookmark for ${unenrolTarget.title}`)
                 setUnenrolTarget(null)
               }}
             >
-              Unenrol
+              Remove bookmark
             </Button>
           </DialogFooter>
         </DialogContent>

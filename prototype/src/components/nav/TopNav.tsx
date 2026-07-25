@@ -15,7 +15,7 @@ export function TopNav() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
+    <header className="dark sticky top-0 z-40 border-b bg-background/95 text-foreground backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
         <Link
           to="/dashboard"

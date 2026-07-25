@@ -44,6 +44,8 @@
     --color-status-in-progress: var(--status-in-progress);
     --color-status-done: var(--status-done);
     --color-status-skipped: var(--status-skipped);
+    --color-node-topic: var(--node-topic);
+    --color-node-subtopic: var(--node-subtopic);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -90,6 +92,8 @@
     --status-in-progress: oklch(0.62 0.14 240);
     --status-done: oklch(0.62 0.14 155);
     --status-skipped: oklch(0.75 0.12 85);
+    --node-topic: oklch(0.55 0.12 175);
+    --node-subtopic: oklch(0.62 0.12 55);
 }
 
 .dark {
@@ -128,6 +132,8 @@
     --status-in-progress: oklch(0.58 0.14 240);
     --status-done: oklch(0.6 0.14 155);
     --status-skipped: oklch(0.65 0.12 85);
+    --node-topic: oklch(0.72 0.12 175);
+    --node-subtopic: oklch(0.75 0.12 55);
 }
 
 @layer base {

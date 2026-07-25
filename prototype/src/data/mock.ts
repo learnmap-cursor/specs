@@ -1,5 +1,7 @@
 export type TopicStatus = "not_started" | "in_progress" | "done" | "skipped"
 
+export type TopicKind = "topic" | "subtopic"
+
 export type ResourceType = "article" | "video" | "course"
 
 export type Resource = {
@@ -14,7 +16,8 @@ export type Topic = {
   title: string
   description: string
   section: string
-  position: { x: number; y: number }
+  kind: TopicKind
+  parentId?: string
   resources: Resource[]
 }
 
@@ -32,7 +35,6 @@ export type Roadmap = {
   tags: string[]
   isSeeded: boolean
   topics: Topic[]
-  edges: TopicEdge[]
 }
 
 export const ALL_TAGS = [
@@ -45,6 +47,29 @@ export const ALL_TAGS = [
   "typescript",
 ] as const
 
+function topic(
+  partial: Omit<Topic, "kind" | "resources"> & { resources?: Resource[] }
+): Topic {
+  return {
+    ...partial,
+    kind: "topic",
+    resources: partial.resources ?? [],
+  }
+}
+
+function subtopic(
+  partial: Omit<Topic, "kind" | "resources"> & {
+    parentId: string
+    resources?: Resource[]
+  }
+): Topic {
+  return {
+    ...partial,
+    kind: "subtopic",
+    resources: partial.resources ?? [],
+  }
+}
+
 export const ROADMAPS: Roadmap[] = [
   {
     id: "rm-frontend",
@@ -55,12 +80,11 @@ export const ROADMAPS: Roadmap[] = [
     tags: ["frontend", "javascript", "typescript"],
     isSeeded: true,
     topics: [
-      {
+      topic({
         id: "fe-internet",
         title: "Internet",
         description: "How the web works: DNS, HTTP, browsers, and hosting basics.",
         section: "Foundations",
-        position: { x: 160, y: 0 },
         resources: [
           {
             id: "fe-internet-1",
@@ -69,13 +93,26 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
+        id: "fe-internet-dns",
+        parentId: "fe-internet",
+        title: "DNS & HTTP",
+        description: "Name resolution and request/response basics.",
+        section: "Foundations",
+      }),
+      subtopic({
+        id: "fe-internet-browsers",
+        parentId: "fe-internet",
+        title: "Browsers",
+        description: "Rendering engines and the browser as a platform.",
+        section: "Foundations",
+      }),
+      topic({
         id: "fe-html",
         title: "HTML",
         description: "Semantic markup, forms, accessibility attributes, and document structure.",
         section: "Foundations",
-        position: { x: 160, y: 120 },
         resources: [
           {
             id: "fe-html-1",
@@ -84,13 +121,26 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
+        id: "fe-html-semantic",
+        parentId: "fe-html",
+        title: "Semantic markup",
+        description: "Meaningful elements and document outline.",
+        section: "Foundations",
+      }),
+      subtopic({
+        id: "fe-html-forms",
+        parentId: "fe-html",
+        title: "Forms",
+        description: "Inputs, validation attributes, and accessible labels.",
+        section: "Foundations",
+      }),
+      topic({
         id: "fe-css",
         title: "CSS",
         description: "Layout, flexbox, grid, responsive design, and modern styling techniques.",
         section: "Foundations",
-        position: { x: 160, y: 240 },
         resources: [
           {
             id: "fe-css-1",
@@ -99,13 +149,26 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
+        id: "fe-css-layout",
+        parentId: "fe-css",
+        title: "Flexbox & Grid",
+        description: "Modern layout systems.",
+        section: "Foundations",
+      }),
+      subtopic({
+        id: "fe-css-responsive",
+        parentId: "fe-css",
+        title: "Responsive design",
+        description: "Breakpoints, fluid type, and mobile-first patterns.",
+        section: "Foundations",
+      }),
+      topic({
         id: "fe-js",
         title: "JavaScript",
         description: "Language fundamentals, DOM APIs, async patterns, and modules.",
         section: "Foundations",
-        position: { x: 160, y: 360 },
         resources: [
           {
             id: "fe-js-1",
@@ -114,13 +177,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "fe-ts",
+        parentId: "fe-js",
         title: "TypeScript",
         description: "Types, interfaces, generics, and tooling for safer frontend code.",
         section: "Tooling",
-        position: { x: 0, y: 480 },
         resources: [
           {
             id: "fe-ts-1",
@@ -129,13 +192,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "fe-vcs",
+        parentId: "fe-js",
         title: "Git & GitHub",
         description: "Version control workflows, branching, and collaboration on GitHub.",
         section: "Tooling",
-        position: { x: 320, y: 480 },
         resources: [
           {
             id: "fe-vcs-1",
@@ -144,13 +207,12 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      topic({
         id: "fe-framework",
         title: "Pick a Framework",
         description: "Compare React, Vue, and Svelte — choose one and go deep.",
         section: "Frameworks",
-        position: { x: 160, y: 600 },
         resources: [
           {
             id: "fe-framework-1",
@@ -159,13 +221,26 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
+        id: "fe-framework-react",
+        parentId: "fe-framework",
+        title: "React",
+        description: "Component model and ecosystem overview.",
+        section: "Frameworks",
+      }),
+      subtopic({
+        id: "fe-framework-vue",
+        parentId: "fe-framework",
+        title: "Vue",
+        description: "Template syntax and reactivity basics.",
+        section: "Frameworks",
+      }),
+      topic({
         id: "fe-testing",
         title: "Testing",
         description: "Unit, integration, and end-to-end testing for UI code.",
         section: "Frameworks",
-        position: { x: 160, y: 720 },
         resources: [
           {
             id: "fe-testing-1",
@@ -174,13 +249,12 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      topic({
         id: "fe-a11y",
         title: "Accessibility",
         description: "WCAG basics, keyboard navigation, ARIA, and inclusive UX.",
         section: "Quality",
-        position: { x: 160, y: 840 },
         resources: [
           {
             id: "fe-a11y-1",
@@ -189,18 +263,14 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-    ],
-    edges: [
-      { id: "e-fe-1", source: "fe-internet", target: "fe-html" },
-      { id: "e-fe-2", source: "fe-html", target: "fe-css" },
-      { id: "e-fe-3", source: "fe-css", target: "fe-js" },
-      { id: "e-fe-4", source: "fe-js", target: "fe-ts" },
-      { id: "e-fe-5", source: "fe-js", target: "fe-vcs" },
-      { id: "e-fe-6", source: "fe-ts", target: "fe-framework" },
-      { id: "e-fe-7", source: "fe-vcs", target: "fe-framework" },
-      { id: "e-fe-8", source: "fe-framework", target: "fe-testing" },
-      { id: "e-fe-9", source: "fe-testing", target: "fe-a11y" },
+      }),
+      subtopic({
+        id: "fe-a11y-aria",
+        parentId: "fe-a11y",
+        title: "ARIA patterns",
+        description: "Roles, states, and common widget patterns.",
+        section: "Quality",
+      }),
     ],
   },
   {
@@ -212,12 +282,11 @@ export const ROADMAPS: Roadmap[] = [
     tags: ["frontend", "react", "javascript", "typescript"],
     isSeeded: true,
     topics: [
-      {
+      topic({
         id: "re-basics",
         title: "React Basics",
         description: "JSX, components, props, and rendering mental models.",
         section: "Core",
-        position: { x: 160, y: 0 },
         resources: [
           {
             id: "re-basics-1",
@@ -226,13 +295,19 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
+        id: "re-basics-jsx",
+        parentId: "re-basics",
+        title: "JSX & components",
+        description: "Composition and props.",
+        section: "Core",
+      }),
+      topic({
         id: "re-hooks",
         title: "Hooks",
         description: "useState, useEffect, custom hooks, and rules of hooks.",
         section: "Core",
-        position: { x: 160, y: 120 },
         resources: [
           {
             id: "re-hooks-1",
@@ -241,13 +316,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "re-router",
+        parentId: "re-hooks",
         title: "React Router",
         description: "Client-side routing, nested layouts, and loaders.",
         section: "App structure",
-        position: { x: 0, y: 240 },
         resources: [
           {
             id: "re-router-1",
@@ -256,13 +331,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "re-state",
+        parentId: "re-hooks",
         title: "State Management",
         description: "Local vs shared state, context, and server-state libraries.",
         section: "App structure",
-        position: { x: 160, y: 240 },
         resources: [
           {
             id: "re-state-1",
@@ -271,13 +346,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "re-forms",
+        parentId: "re-hooks",
         title: "Forms",
         description: "Controlled inputs, validation, and accessible form patterns.",
         section: "UI",
-        position: { x: 320, y: 240 },
         resources: [
           {
             id: "re-forms-1",
@@ -286,13 +361,12 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      topic({
         id: "re-perf",
         title: "Performance",
         description: "Memoization pitfalls, concurrent features, and profiling.",
         section: "UI",
-        position: { x: 160, y: 360 },
         resources: [
           {
             id: "re-perf-1",
@@ -301,13 +375,12 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      topic({
         id: "re-testing",
         title: "Testing React",
         description: "Component tests with Testing Library and user-centric assertions.",
         section: "Quality",
-        position: { x: 160, y: 480 },
         resources: [
           {
             id: "re-testing-1",
@@ -316,13 +389,19 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
+        id: "re-testing-rtl",
+        parentId: "re-testing",
+        title: "Testing Library",
+        description: "Queries and user-event patterns.",
+        section: "Quality",
+      }),
+      topic({
         id: "re-next",
         title: "Next steps",
         description: "SSR frameworks, design systems, and production checklist.",
         section: "Quality",
-        position: { x: 160, y: 600 },
         resources: [
           {
             id: "re-next-1",
@@ -331,17 +410,7 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-    ],
-    edges: [
-      { id: "e-re-1", source: "re-basics", target: "re-hooks" },
-      { id: "e-re-2", source: "re-hooks", target: "re-router" },
-      { id: "e-re-3", source: "re-hooks", target: "re-state" },
-      { id: "e-re-4", source: "re-hooks", target: "re-forms" },
-      { id: "e-re-5", source: "re-state", target: "re-perf" },
-      { id: "e-re-6", source: "re-forms", target: "re-testing" },
-      { id: "e-re-7", source: "re-perf", target: "re-testing" },
-      { id: "e-re-8", source: "re-testing", target: "re-next" },
+      }),
     ],
   },
   {
@@ -353,12 +422,11 @@ export const ROADMAPS: Roadmap[] = [
     tags: ["devops", "backend", "python"],
     isSeeded: true,
     topics: [
-      {
+      topic({
         id: "do-linux",
         title: "Linux Basics",
         description: "Shell, processes, permissions, and package management.",
         section: "Foundations",
-        position: { x: 160, y: 0 },
         resources: [
           {
             id: "do-linux-1",
@@ -367,13 +435,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "do-networking",
+        parentId: "do-linux",
         title: "Networking",
         description: "TCP/IP, DNS, load balancing, and TLS essentials.",
         section: "Foundations",
-        position: { x: 0, y: 120 },
         resources: [
           {
             id: "do-networking-1",
@@ -382,13 +450,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "do-containers",
+        parentId: "do-linux",
         title: "Containers",
         description: "Docker images, volumes, networking, and compose.",
         section: "Runtime",
-        position: { x: 320, y: 120 },
         resources: [
           {
             id: "do-containers-1",
@@ -397,13 +465,12 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      topic({
         id: "do-k8s",
         title: "Kubernetes",
         description: "Pods, deployments, services, and cluster mental models.",
         section: "Runtime",
-        position: { x: 160, y: 240 },
         resources: [
           {
             id: "do-k8s-1",
@@ -412,13 +479,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "do-ci",
+        parentId: "do-k8s",
         title: "CI/CD",
         description: "Pipelines, artifacts, environments, and progressive delivery.",
         section: "Delivery",
-        position: { x: 0, y: 360 },
         resources: [
           {
             id: "do-ci-1",
@@ -427,13 +494,13 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
         id: "do-iac",
+        parentId: "do-k8s",
         title: "Infrastructure as Code",
         description: "Declarative infra with Terraform or similar tools.",
         section: "Delivery",
-        position: { x: 320, y: 360 },
         resources: [
           {
             id: "do-iac-1",
@@ -442,13 +509,12 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-      {
+      }),
+      topic({
         id: "do-observability",
         title: "Observability",
         description: "Logs, metrics, traces, and alerting that help you sleep.",
         section: "Operations",
-        position: { x: 160, y: 480 },
         resources: [
           {
             id: "do-observability-1",
@@ -457,13 +523,19 @@ export const ROADMAPS: Roadmap[] = [
             type: "article",
           },
         ],
-      },
-      {
+      }),
+      subtopic({
+        id: "do-observability-metrics",
+        parentId: "do-observability",
+        title: "Metrics & logs",
+        description: "Signal types and when to use each.",
+        section: "Operations",
+      }),
+      topic({
         id: "do-cloud",
         title: "Cloud Fundamentals",
         description: "Compute, storage, networking, and IAM on a major cloud.",
         section: "Operations",
-        position: { x: 160, y: 600 },
         resources: [
           {
             id: "do-cloud-1",
@@ -472,18 +544,7 @@ export const ROADMAPS: Roadmap[] = [
             type: "course",
           },
         ],
-      },
-    ],
-    edges: [
-      { id: "e-do-1", source: "do-linux", target: "do-networking" },
-      { id: "e-do-2", source: "do-linux", target: "do-containers" },
-      { id: "e-do-3", source: "do-networking", target: "do-k8s" },
-      { id: "e-do-4", source: "do-containers", target: "do-k8s" },
-      { id: "e-do-5", source: "do-k8s", target: "do-ci" },
-      { id: "e-do-6", source: "do-k8s", target: "do-iac" },
-      { id: "e-do-7", source: "do-ci", target: "do-observability" },
-      { id: "e-do-8", source: "do-iac", target: "do-observability" },
-      { id: "e-do-9", source: "do-observability", target: "do-cloud" },
+      }),
     ],
   },
 ]
@@ -494,4 +555,46 @@ export function getRoadmapById(id: string): Roadmap | undefined {
 
 export function getTopicById(roadmapId: string, topicId: string): Topic | undefined {
   return getRoadmapById(roadmapId)?.topics.find((topic) => topic.id === topicId)
+}
+
+export function getRootTopics(topics: Topic[]): Topic[] {
+  return topics.filter((topic) => topic.kind === "topic")
+}
+
+export function getSubtopics(topics: Topic[], parentId: string): Topic[] {
+  return topics.filter(
+    (topic) => topic.kind === "subtopic" && topic.parentId === parentId
+  )
+}
+
+/** Topic spine edges + parent→subtopic edges. */
+export function buildRoadmapEdges(topics: Topic[]): TopicEdge[] {
+  const roots = getRootTopics(topics)
+  const edges: TopicEdge[] = []
+
+  for (let index = 0; index < roots.length - 1; index += 1) {
+    const source = roots[index]
+    const target = roots[index + 1]
+    edges.push({
+      id: `e-${source.id}-${target.id}`,
+      source: source.id,
+      target: target.id,
+    })
+  }
+
+  for (const item of topics) {
+    if (item.kind === "subtopic" && item.parentId) {
+      edges.push({
+        id: `e-${item.parentId}-${item.id}`,
+        source: item.parentId,
+        target: item.id,
+      })
+    }
+  }
+
+  return edges
+}
+
+export function countTopics(topics: Topic[]): number {
+  return getRootTopics(topics).length
 }
