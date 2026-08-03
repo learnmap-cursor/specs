@@ -1,0 +1,11 @@
+schema: spec-driven
+
+context: |
+  LearnMap — visual learning roadmaps.
+  Monorepo-style planning lives in this specs store; code is in sibling repos:
+  - frontend: React + Vite + TypeScript (Tailwind, shadcn/ui, React Router, TanStack Query)
+  - backend: NestJS REST API + Prisma + PostgreSQL
+  Existing product docs also live in this repo under requirements/, architecture/, decisions/, diagrams/.
+  Domain: learning roadmaps, catalog browsing, tags, auth (Google/GitHub OAuth optional).
+
+# Project context is shown to AI when creating artifacts.

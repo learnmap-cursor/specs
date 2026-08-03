@@ -1,0 +1,3 @@
+version: 1
+id: learnmap
+remote: https://github.com/learnmap-cursor/specs.git

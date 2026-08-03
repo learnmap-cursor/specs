@@ -7,6 +7,14 @@ requirements (`requirements/`), architecture docs (`architecture/`), ADRs (`deci
 diagrams (`diagrams/`), GitHub issue templates (`.github/ISSUE_TEMPLATE/`), a CI workflow
 (`.github/workflows/issue-to-pr.yml`), and Claude Code agent definitions (`.claude/agents/`).
 
+It is also the **OpenSpec store** for LearnMap (`id: learnmap`). Planning artifacts live in
+`openspec/`; sibling `frontend` and `backend` repos point here via `store: learnmap` in their
+`openspec/config.yaml`. Register this checkout once per machine:
+
+```bash
+openspec store register /agent/repos/specs --id learnmap
+```
+
 There is **no production application** in the root of this repository. The actual LearnMap
 product lives in separate sibling repos (`learnmap/frontend` / `app` — React + Vite;
 `learnmap/backend` / `api` — NestJS + Prisma + PostgreSQL), which are not part of this
